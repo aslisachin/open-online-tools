@@ -16,12 +16,13 @@
         box-shadow: 10px 8px 0px rgb(191 219 254);
         background: #e8eff5;
         border-radius: 10px;
-        text-align: center;
         font-family: 'Ubuntu', sans-serif;
         color: rgb(29, 28, 28);
         max-width: 80%;
       }
-
+      .text-center {
+            text-align: center;
+      }
       .avatar {
         border-radius: 50%;
         width: 150px;
