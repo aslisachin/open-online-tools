@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Color Generator</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .color-box {
+      width: 50%;
+      height: 90px;
+      margin: 10px;
+      display: inline-block;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container text-center">
+    <h2 class="mt-5">Random Color Generator</h2>
+    <button id="generateBtn" class="btn btn-primary mt-3">Generate Random Color</button>
+    <div id="colorDisplay" class="mt-5"></div>
+    <div id="colorCode"></div>
+  </div>
+
+
+  <script>
+    // Function to generate a random hex color
+    function generateRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    // Function to display random color
+    function displayRandomColor() {
+      const color = generateRandomColor();
+      const colorDisplay = document.getElementById('colorDisplay');
+      const colorCode = document.getElementById('colorCode');
+      colorDisplay.innerHTML = `<div class="color-box" style="background-color: ${color};"></div>`;
+      colorCode.innerHTML = `<h2> ${color};</h2>`;
+    }
+
+    // Event listener for the button click
+    document.getElementById('generateBtn').addEventListener('click', displayRandomColor);
+  </script>
+</body>
+</html>
