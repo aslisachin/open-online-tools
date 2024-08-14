@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Percentage Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        .calculator {
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="number"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        input[type="button"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        input[type="button"]:hover {
+            background-color: #218838;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <h2>Percentage Calculator</h2>
+        <input type="number" id="part" placeholder="Enter the part (e.g., 49)">
+        <input type="number" id="whole" placeholder="Enter the whole (e.g., 69.30)">
+        <input type="button" value="Calculate Percentage" onclick="calculatePercentage()">
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function calculatePercentage() {
+            var part = parseFloat(document.getElementById('part').value);
+            var whole = parseFloat(document.getElementById('whole').value);
+            if (isNaN(part) || isNaN(whole) || whole === 0) {
+                document.getElementById('result').innerHTML = "Please enter valid numbers.";
+                return;
+            }
+            var percentage = (part / whole) * 100;
+            document.getElementById('result').innerHTML = part + " is " + percentage.toFixed(2) + "% of " + whole;
+        }
+    </script>
+
+</body>
+</html>
