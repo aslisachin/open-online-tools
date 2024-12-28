@@ -1,121 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Open Online Tools</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap" rel="stylesheet">
-    <link href="style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <meta property="og:title" content="Open Online Tools">
     <meta property="og:site_name" content="AsliSachin">
     <meta property="og:url" content="https://open.aslisachin.com">
     <meta property="og:description" content="Open Online Tools - Free Open Source Tools">
     <meta property="og:type" content="website">
     <style>
-  .grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    grid-gap: 10px;
-    padding: 10px;
-  }
+        :root {
+            --primary-color: #3B82F6;
+            --surface-color: #ffffff;
+            --text-color: #1F2937;
+            --accent-color: #E28413;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
 
-  .grid-item {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    overflow: hidden;
-  }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  .grid-item img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
+        body {
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            background: var(--surface-color);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .tool-card {
+            background: var(--surface-color);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .tool-card a {
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .tool-image {
+            position: relative;
+            padding-top: 60%;
+            background: #f3f4f6;
+            overflow: hidden;
+        }
+
+        .tool-image img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .tool-card:hover .tool-image img {
+            transform: scale(1.05);
+        }
+
+        .tool-info {
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .tool-info h3 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .tool-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #EFF6FF;
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            background: var(--surface-color);
+            border-radius: 20px;
+            margin-top: 2rem;
+        }
+
+        .footer small {
+            color: #6B7280;
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 1.5rem;
+            }
+
+            .tool-card {
+                border-radius: 12px;
+            }
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="container">
-      <h1 class="name text-center">Open Online Tools</h1>
-      <hr/>
+        <header class="header">
+            <h1>Open Online Tools</h1>
+            <p>A collection of free and open-source tools for everyday use</p>
+        </header>
+
+        <div class="tools-grid">
+            <div class="tool-card">
+                <a href="https://aslisachin.github.io/projects/random-fun-fact-generator.html">
+                    <div class="tool-image">
+                        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/fbf5f3/000/Random Fun Fact Generator" alt="Random Fun Fact Generator">
+                    </div>
+                    <div class="tool-info">
+                        <h3>Random Fun Fact Generator</h3>
+                        <span class="tool-category">Generator</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="tool-card">
+                <a href="https://aslisachin.github.io/open-online-tools/yt/fetch-video-details.html">
+                    <div class="tool-image">
+                        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/fbf5f3/000/Fetch YT Video Details" alt="Fetch YT Video Details">
+                    </div>
+                    <div class="tool-info">
+                        <h3>YouTube Video Details</h3>
+                        <span class="tool-category">YouTube</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="tool-card">
+                <a href="https://aslisachin.github.io/open-online-tools/generators/vcard-generator.html">
+                    <div class="tool-image">
+                        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/fbf5f3/000/VCard Generator" alt="VCard Generator">
+                    </div>
+                    <div class="tool-info">
+                        <h3>VCard Generator</h3>
+                        <span class="tool-category">Generator</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="tool-card">
+                <a href="https://aslisachin.github.io/open-online-tools/generators/random-color.html">
+                    <div class="tool-image">
+                        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/fbf5f3/000/Random Color Generator" alt="Random Color Generator">
+                    </div>
+                    <div class="tool-info">
+                        <h3>Random Color Generator</h3>
+                        <span class="tool-category">Generator</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="tool-card">
+                <a href="https://aslisachin.github.io/open-online-tools/yt/yt-thumbnail-grabber.html">
+                    <div class="tool-image">
+                        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/fbf5f3/000/YT Thumbnail Grabber" alt="YT Thumbnail Grabber">
+                    </div>
+                    <div class="tool-info">
+                        <h3>YouTube Thumbnail Grabber</h3>
+                        <span class="tool-category">YouTube</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="tool-card">
+                <a href="https://aslisachin.github.io/open-online-tools/crypto/crypto-calculator.html">
+                    <div class="tool-image">
+                        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/fbf5f3/000/Crypto Calculator" alt="Crypto Calculator">
+                    </div>
+                    <div class="tool-info">
+                        <h3>Crypto Calculator</h3>
+                        <span class="tool-category">Crypto</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="tool-card">
+                <a href="https://aslisachin.github.io/open-online-tools/crypto/crypto-to-fiat-converter.html">
+                    <div class="tool-image">
+                        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/fbf5f3/000/Crypto to Fiat Converter" alt="Crypto to Fiat Converter">
+                    </div>
+                    <div class="tool-info">
+                        <h3>Crypto to Fiat Converter</h3>
+                        <span class="tool-category">Crypto</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="tool-card">
+                <a href="https://aslisachin.github.io/open-online-tools/generators/upi-link-maker.html">
+                    <div class="tool-image">
+                        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/fbf5f3/000/UPI Link Maker" alt="UPI Link Maker">
+                    </div>
+                    <div class="tool-info">
+                        <h3>UPI Link Maker</h3>
+                        <span class="tool-category">Generator</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="tool-card">
+                <a href="https://aslisachin.github.io/open-online-tools/generators/lorem-ipsum-generator.html">
+                    <div class="tool-image">
+                        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/fbf5f3/000/Lorem Ipsum Generator" alt="Lorem Ipsum Generator">
+                    </div>
+                    <div class="tool-info">
+                        <h3>Lorem Ipsum Generator</h3>
+                        <span class="tool-category">Generator</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="tool-card">
+                <a href="https://aslisachin.github.io/open-online-tools/convertor/image-to-pdf.html">
+                    <div class="tool-image">
+                        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/fbf5f3/000/Image to PDF" alt="Image to PDF">
+                    </div>
+                    <div class="tool-info">
+                        <h3>Image to PDF Converter</h3>
+                        <span class="tool-category">Converter</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="tool-card">
+                <a href="https://aslisachin.github.io/open-online-tools/calculators/percentage-calculator.html">
+                    <div class="tool-image">
+                        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/fbf5f3/000/Percentage Calculator" alt="Percentage Calculator">
+                    </div>
+                    <div class="tool-info">
+                        <h3>Percentage Calculator</h3>
+                        <span class="tool-category">Calculator</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <small>&copy; 2024 Open Online Tools by AsliSachin</small>
+        </footer>
     </div>
-    <br/>
-      
-<div class="grid-container">
-     
-  <div class="grid-item">
-    <a href="https://aslisachin.github.io/projects/random-fun-fact-generator.html">
-        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/fbf5f3/000/Random Fun Fact Generator" alt="Random Fun Fact Generator">
-    </a>
-  </div>
-  <div class="grid-item">
-    <a href="https://aslisachin.github.io/open-online-tools/yt/fetch-video-details.html">
-        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/DE3C4B/fff/Fetch YT Video Details" alt="Fetch YT Video Details">
-    </a>
-  </div>
-  
-  <div class="grid-item">
-    <a href="https://aslisachin.github.io/open-online-tools/generators/vcard-generator.html">
-        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/fbf5f3/000/VCard Generator" alt="VCard Generator">
-    </a>
-  </div>
-  
-  <div class="grid-item">
-    <a href="https://aslisachin.github.io/open-online-tools/generators/random-color.html">
-        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/F2D398/000/Random Color Generator" alt="Random Color Generator">
-    </a>
-  </div>
-
-  <div class="grid-item">
-    <a href="https://aslisachin.github.io/open-online-tools/yt/yt-thumbnail-grabber.html">
-        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/DE3C4B/fff/YT Thumbnail Grabber" alt="YT Thumbnail Grabber">
-    </a>
-  </div>
-
-  <div class="grid-item">
-    <a href="https://aslisachin.github.io/open-online-tools/crypto/crypto-calculator.html">
-        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/E28413/000/Crypto Calculator" alt="Crypto Calculator">
-    </a>
-  </div>
-
-  <div class="grid-item">
-    <a href="https://aslisachin.github.io/open-online-tools/crypto/crypto-to-fiat-converter.html">
-        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/E28413/000/Crypto to Fiat Converter" alt="Crypto Calculator">
-    </a>
-  </div>
-
-  <div class="grid-item">
-    <a href="https://aslisachin.github.io/open-online-tools/generators/upi-link-maker.html">
-        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/F2D398/000/UPI Link Maker" alt="UPI Link Maker">
-    </a>
-  </div>
-
-  <div class="grid-item">
-    <a href="https://aslisachin.github.io/open-online-tools/generators/lorem-ipsum-generator.html">
-        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/E28413/000/Lorem Ipsum Generator" alt="Lorem Ipsum Generator">
-    </a>
-  </div>
-
-  <div class="grid-item">
-    <a href="https://aslisachin.github.io/open-online-tools/convertor/image-to-pdf.html">
-        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/E28413/000/IMG2PDF" alt="IMG To PDF">
-    </a>
-  </div>
-
-  <div class="grid-item">
-    <a href="https://aslisachin.github.io/open-online-tools/calculators/percentage-calculator.html">
-        <img src="https://tools.apgy.in/tool/dummy-image-maker/500x300/png/fbf5f3/000/Percentage Calculator" alt="Percentage Calculator">
-    </a>
-  </div>
-  
-</div>
-    <div class="container text-center">
-      <small>&copy; Open Online Tools</small>
-    </div>
-
-    <br/><br/>
-
-  </body>
-
+</body>
 </html>
