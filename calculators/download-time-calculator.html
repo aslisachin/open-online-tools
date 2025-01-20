@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Time Calculator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .progress {
+            height: 25px;
+        }
+        .card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .form-group label {
+            font-weight: 500;
+        }
+        .result-box {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Download Time Calculator</h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="downloadCalculator">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="fileSize">File Size</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="fileSize" required min="0" step="0.01">
+                                            <div class="input-group-append">
+                                                <select class="form-control" id="fileSizeUnit">
+                                                    <option value="KB">KB</option>
+                                                    <option value="MB" selected>MB</option>
+                                                    <option value="GB">GB</option>
+                                                    <option value="TB">TB</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="connectionSpeed">Connection Speed</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="connectionSpeed" required min="0" step="0.01">
+                                            <div class="input-group-append">
+                                                <select class="form-control" id="speedUnit">
+                                                    <option value="Kbps">Kbps</option>
+                                                    <option value="Mbps" selected>Mbps</option>
+                                                    <option value="Gbps">Gbps</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="overhead">Network Overhead</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="overhead" value="5" min="0" max="100">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                                <small class="form-text text-muted">Typical overhead ranges from 5-10%</small>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Calculate</button>
+                            <button type="button" id="simulateBtn" class="btn btn-success ml-2" disabled>Simulate Download</button>
+                        </form>
+
+                        <div id="results" class="result-box d-none">
+                            <h5>Download Time Estimation:</h5>
+                            <div id="timeResults"></div>
+                            <div class="mt-3">
+                                <div class="form-group">
+                                    <label>Simulation Speed Multiplier</label>
+                                    <input type="range" class="form-control-range" id="speedMultiplier" 
+                                           min="1" max="1000" value="100">
+                                    <small class="form-text text-muted">
+                                        <span id="multiplierValue">100</span>x faster than real time
+                                    </small>
+                                </div>
+                                <div class="progress mb-2">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                         role="progressbar" 
+                                         style="width: 0%" 
+                                         id="downloadProgress"></div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <span id="bytesTransferred">0 B</span> / <span id="totalBytes">0 B</span>
+                                        (<span id="transferSpeed">0 B/s</span>)
+                                    </div>
+                                    <div>
+                                        <span id="progressPercentage">0.00%</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>Time Remaining: <span id="timeRemaining">--:--:--</span></div>
+                                    <div>
+                                        <button type="button" id="pauseBtn" class="btn btn-warning btn-sm mr-2" disabled>Pause</button>
+                                        <button type="button" id="cancelBtn" class="btn btn-danger btn-sm" disabled>Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        class DownloadCalculator {
+            constructor() {
+                this.isSimulating = false;
+                this.isPaused = false;
+                this.simulationInterval = null;
+                this.startTime = null;
+                this.setupEventListeners();
+            }
+
+            togglePause() {
+                if (!this.isSimulating) return;
+                
+                this.isPaused = !this.isPaused;
+                const pauseBtn = document.getElementById('pauseBtn');
+                pauseBtn.textContent = this.isPaused ? 'Resume' : 'Pause';
+                pauseBtn.classList.toggle('btn-warning');
+                pauseBtn.classList.toggle('btn-success');
+            }
+
+            cancelSimulation() {
+                if (!this.isSimulating) return;
+                
+                clearInterval(this.simulationInterval);
+                this.finishSimulation();
+                
+                // Reset progress
+                const progressBar = document.getElementById('downloadProgress');
+                const progressPercentage = document.getElementById('progressPercentage');
+                const bytesTransferred = document.getElementById('bytesTransferred');
+                const transferSpeed = document.getElementById('transferSpeed');
+                const timeRemaining = document.getElementById('timeRemaining');
+                
+                progressBar.style.width = '0%';
+                progressPercentage.textContent = '0.00%';
+                bytesTransferred.textContent = '0 B';
+                transferSpeed.textContent = '0 B/s';
+                timeRemaining.textContent = '--:--:--';
+            }
+
+            finishSimulation() {
+                clearInterval(this.simulationInterval);
+                this.isSimulating = false;
+                this.isPaused = false;
+                
+                const simulateBtn = document.getElementById('simulateBtn');
+                const pauseBtn = document.getElementById('pauseBtn');
+                const cancelBtn = document.getElementById('cancelBtn');
+                
+                simulateBtn.disabled = false;
+                pauseBtn.disabled = true;
+                cancelBtn.disabled = true;
+                
+                pauseBtn.textContent = 'Pause';
+                pauseBtn.classList.remove('btn-success');
+                pauseBtn.classList.add('btn-warning');
+            }
+
+            setupEventListeners() {
+                document.getElementById('downloadCalculator').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.calculateTime();
+                });
+
+                document.getElementById('simulateBtn').addEventListener('click', () => {
+                    this.simulateDownload();
+                });
+
+                document.getElementById('pauseBtn').addEventListener('click', () => {
+                    this.togglePause();
+                });
+
+                document.getElementById('cancelBtn').addEventListener('click', () => {
+                    this.cancelSimulation();
+                });
+
+                document.getElementById('speedMultiplier').addEventListener('input', (e) => {
+                    document.getElementById('multiplierValue').textContent = e.target.value;
+                });
+            }
+
+            getBytes(size, unit) {
+                const units = {
+                    'KB': size * 1024,
+                    'MB': size * 1024 * 1024,
+                    'GB': size * 1024 * 1024 * 1024,
+                    'TB': size * 1024 * 1024 * 1024 * 1024
+                };
+                return units[unit];
+            }
+
+            getBitsPerSecond(speed, unit) {
+                const units = {
+                    'Kbps': speed * 1000,
+                    'Mbps': speed * 1000000,
+                    'Gbps': speed * 1000000000
+                };
+                return units[unit];
+            }
+
+            calculateTime() {
+                const fileSize = parseFloat(document.getElementById('fileSize').value);
+                const fileSizeUnit = document.getElementById('fileSizeUnit').value;
+                const connectionSpeed = parseFloat(document.getElementById('connectionSpeed').value);
+                const speedUnit = document.getElementById('speedUnit').value;
+                const overhead = parseFloat(document.getElementById('overhead').value) / 100;
+
+                const bytes = this.getBytes(fileSize, fileSizeUnit);
+                const bitsPerSecond = this.getBitsPerSecond(connectionSpeed, speedUnit);
+                const actualBitsPerSecond = bitsPerSecond * (1 - overhead);
+                
+                const seconds = (bytes * 8) / actualBitsPerSecond;
+                
+                this.displayResults(seconds);
+                document.getElementById('simulateBtn').disabled = false;
+                document.getElementById('results').classList.remove('d-none');
+                document.getElementById('downloadProgress').style.width = '0%';
+                document.getElementById('downloadProgress').textContent = '0%';
+            }
+
+            displayResults(seconds) {
+                const times = this.formatTime(seconds);
+                const resultsDiv = document.getElementById('timeResults');
+                resultsDiv.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Hours:</strong> ${times.hours}</p>
+                            <p><strong>Minutes:</strong> ${times.minutes}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Seconds:</strong> ${times.seconds}</p>
+                            <p><strong>Total Seconds:</strong> ${times.totalSeconds.toFixed(2)}</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            formatTime(totalSeconds) {
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = Math.floor(totalSeconds % 60);
+                
+                return {
+                    hours,
+                    minutes,
+                    seconds,
+                    totalSeconds
+                };
+            }
+
+            formatBytes(bytes) {
+                const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+                if (bytes === 0) return '0 B';
+                const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+                return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+            }
+
+            formatTimeRemaining(seconds) {
+                if (seconds === Infinity || seconds < 0) return '--:--:--';
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            }
+
+            simulateDownload() {
+                if (this.isSimulating) return;
+                
+                const fileSize = parseFloat(document.getElementById('fileSize').value);
+                const fileSizeUnit = document.getElementById('fileSizeUnit').value;
+                const connectionSpeed = parseFloat(document.getElementById('connectionSpeed').value);
+                const speedUnit = document.getElementById('speedUnit').value;
+                const overhead = parseFloat(document.getElementById('overhead').value) / 100;
+                const speedMultiplier = parseFloat(document.getElementById('speedMultiplier').value);
+
+                const totalBytes = this.getBytes(fileSize, fileSizeUnit);
+                const bitsPerSecond = this.getBitsPerSecond(connectionSpeed, speedUnit);
+                const actualBitsPerSecond = bitsPerSecond * (1 - overhead);
+                const totalSeconds = (totalBytes * 8) / actualBitsPerSecond;
+                
+                this.isSimulating = true;
+                this.isPaused = false;
+                this.startTime = Date.now();
+
+                const progressBar = document.getElementById('downloadProgress');
+                const progressPercentage = document.getElementById('progressPercentage');
+                const simulateBtn = document.getElementById('simulateBtn');
+                const pauseBtn = document.getElementById('pauseBtn');
+                const cancelBtn = document.getElementById('cancelBtn');
+                const bytesTransferred = document.getElementById('bytesTransferred');
+                const totalBytesElem = document.getElementById('totalBytes');
+                const transferSpeed = document.getElementById('transferSpeed');
+                const timeRemaining = document.getElementById('timeRemaining');
+
+                let elapsedTime = 0;
+                let lastUpdate = Date.now();
+
+                simulateBtn.disabled = true;
+                pauseBtn.disabled = false;
+                cancelBtn.disabled = false;
+                progressBar.style.width = '0%';
+                progressPercentage.textContent = '0.00%';
+                totalBytesElem.textContent = this.formatBytes(totalBytes);
+
+                // Update every 50ms
+                this.simulationInterval = setInterval(() => {
+                    if (this.isPaused) return;
+
+                    const now = Date.now();
+                    const delta = (now - lastUpdate) / 1000; // seconds
+                    lastUpdate = now;
+
+                    elapsedTime += delta * speedMultiplier;
+                    const progress = Math.min((elapsedTime / totalSeconds) * 100, 100);
+                    const currentBytes = Math.min((totalBytes * progress) / 100, totalBytes);
+                    const bytesPerSecond = (currentBytes / elapsedTime);
+                    const remainingSeconds = (totalBytes - currentBytes) / bytesPerSecond;
+                    
+                    progressBar.style.width = `${progress}%`;
+                    progressPercentage.textContent = `${progress.toFixed(2)}%`;
+                    bytesTransferred.textContent = this.formatBytes(currentBytes);
+                    transferSpeed.textContent = `${this.formatBytes(bytesPerSecond)}/s`;
+                    timeRemaining.textContent = this.formatTimeRemaining(remainingSeconds);
+                    
+                    if (progress >= 100) {
+                        this.finishSimulation();
+                    }
+                }, 50);
+            }
+        }
+
+        // Initialize the calculator
+        const calculator = new DownloadCalculator();
+    </script>
+</body>
+</html>
